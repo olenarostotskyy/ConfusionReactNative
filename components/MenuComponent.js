@@ -11,6 +11,7 @@ function Menu(props) { //Menu, which receives their props as the parameter and t
                     key={index}
                     title={item.name}
                     subtitle={item.description}
+                    onPress={() => props.onPress(item.id)}
                     leftAvatar={{ source: require('./images/uthappizza.png')}}//require that means that, whatever I supply as the image here should be already included in the code here.
                   />
         );
