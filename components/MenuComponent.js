@@ -8,7 +8,7 @@ class Menu extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            dishes= DISHES
+            dishes :DISHES
         };
     }
 
@@ -25,13 +25,13 @@ class Menu extends Component {
                     key={index}
                     title={item.name}
                     subtitle={item.description}
-                    onPress={() => navigate('DishDetail',{dishId: item.id} )}
+                    onPress={() => navigate('DishDetail', { dishId: item.id })}
                     leftAvatar={{ source: require('./images/uthappizza.png') }}//require that means that, whatever I supply as the image here should be already included in the code here.
                 />
             );
         }
 
-const {navigate} = this.props.navigation;
+        const { navigate } = this.props.navigation;
 
         return (
             <FlatList //this FlatList will be mapped into a list view in Android and the corresponding list view in iOS.
