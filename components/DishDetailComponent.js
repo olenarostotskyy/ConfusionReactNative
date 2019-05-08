@@ -1,8 +1,15 @@
 import React, { Component } from 'react';
 import { Text, View, ScrollView, FlatList } from 'react-native';
 import { Card, Icon } from 'react-native-elements';
-import { DISHES } from '../shared/dishes';
-import { COMMENTS } from '../shared/comments';
+import { connect } from 'react-redux';
+import { baseUrl } from '../shared/baseUrl';
+
+const mapStateToProps = state => {
+    return {
+      dishes: state.dishes,
+      comments: state.comments
+    }
+  }
 
 function RenderDish(props) {
 
@@ -14,7 +21,7 @@ function RenderDish(props) {
                 // when dish is null we will return the card
                 //And the card takes Props as featuredTitle, which is going to be shown in the Card
                 featuredTitle={dish.name}//dish object will contain a featuredTitle
-                image={require('./images/uthappizza.png')}>
+                image={{uri: baseUrl + dish.image}}>
 
                 <Text style={{ margin: 10 }}>
                     {dish.description}
@@ -68,8 +75,7 @@ class DishDetail extends Component {//here we make use of the card!
     constructor(props) {
         super(props);
         this.state = {
-            dishes: DISHES,
-            comments: COMMENTS,
+          
             favorites: []//empty array, and then as I select the dishes and mark them as favorites, then they will be added into the favorites array. And then I can use the favorites array to check to see if my dish is a favorite dish or not.
         };
     }
@@ -87,13 +93,13 @@ class DishDetail extends Component {//here we make use of the card!
         const dishId = this.props.navigation.getParam('dishId', '');
         return (
             <ScrollView>
-                <RenderDish dish={this.state.dishes[+dishId]} 
+                <RenderDish dish={this.props.dishes.dishes[+dishId]} 
                 favorite={this.state.favorites.some(el => el === dishId)}//Some will return a true if there exists an item in there that matches this function, otherwise, it will return a false. 
                 //will check every element in this array to see if this element, Is the same as the dishId.
                 //If this evaluates to true, if anyone of the elements in the array evaluates to true, this will return a true, and that's what this favorite will return. So, your favorite will be true if the dish ID already exists in this array. If it doesn't exist in this array, then el === dishId will fail for all the dishIds, and then so, in that case this will return a false.
                 onPress={() => this.markFavorite(dishId)} 
                 />
-                <RenderComments comments={this.state.comments.filter((comment) => comment.dishId === dishId)} />
+                <RenderComments comments={this.props.comments.comments.filter((comment) => comment.dishId === dishId)} />
             </ScrollView>
             //will filter all the comments that belong to this particular dish
             //Only those comments where the dishId is the same as the dishId that you have just extracted, this should match
@@ -102,4 +108,4 @@ class DishDetail extends Component {//here we make use of the card!
 
 }
 
-export default DishDetail;
+export default connect(mapStateToProps)(DishDetail);

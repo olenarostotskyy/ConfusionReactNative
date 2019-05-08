@@ -1,18 +1,20 @@
 import React, { Component } from 'react';
 import { Text, ScrollView, FlatList,View  } from 'react-native';
 import { Card,ListItem } from 'react-native-elements';
-import { LEADERS } from '../shared/leaders';
+import { connect } from 'react-redux';
+import { baseUrl } from '../shared/baseUrl';
+
+const mapStateToProps = state => {
+    return {
+      leaders: state.leaders
+    }
+  }
 
 
 
 
 class About extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            leaders: LEADERS
-        };
-    }
+   
     static navigationOptions = {//f you want to further customize for each of the components in your navigator, you can specify the navigation options like this inside the component. 
         title: 'About us'//title will be "menu"
     }
@@ -27,7 +29,7 @@ render() {
                 key={index}
                 title={item.name}
                 subtitle={item.description}
-                leftAvatar={{ source: require('./images/alberto.png') }}//require that means that, whatever I supply as the image here should be already included in the code here.
+                leftAvatar={{source: {uri: baseUrl + item.image}}}//require that means that, whatever I supply as the image here should be already included in the code here.
             />
         );
     }
@@ -42,7 +44,7 @@ render() {
        
         <FlatList //this FlatList will be mapped into a list view in Android and the corresponding list view in iOS.
             //It takes a data as one of the parameters and the data that I'm going to pass is props.dishes. 
-            data={this.state.leaders} //one of the paramenters ///
+            data={this.props.leaders.leaders} //one of the paramenters ///
             renderItem={renderLeaders}// secend param--used to specify how to render each item in the list. //we will render each item in the list(should be array of objects)
             keyExtractor={item => item.id.toString()} //when you use renderItem you pahe to have the keyExtactor//
         //The keyExtractor will extract one of the props off each item in the array and use that as a key here. Now, in this case, every item, when you go into dishes.js file, you'll notice that every item in the dishes.js file has this id here. 
@@ -77,6 +79,6 @@ function History(props) {
 
 
 
-export default About;
+export default connect(mapStateToProps)(About);
 
 

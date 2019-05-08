@@ -5,19 +5,38 @@ import DishDetail from './DishDetailComponent';
 import Contact from './ContactComponent';
 import About from './AboutComponent';
 import { View, Platform, Text, ScrollView, Image, StyleSheet } from 'react-native';
-import { createStackNavigator, createDrawerNavigator,DrawerItems, SafeAreaView } from 'react-navigation';
+import { createStackNavigator, createDrawerNavigator, DrawerItems, SafeAreaView } from 'react-navigation';
 import { Icon } from 'react-native-elements';
+import { connect } from 'react-redux';
+import { fetchDishes, fetchComments, fetchPromos, fetchLeaders } from '../redux/ActionCreators';
 
+const mapStateToProps = state => {
+    return {
+        dishes: state.dishes,
+        comments: state.comments,
+        promotions: state.promotions,
+        leaders: state.leaders
+    }
+}
+
+const mapDispatchToProps = dispatch => ({
+    fetchDishes: () => dispatch(fetchDishes()),
+    fetchComments: () => dispatch(fetchComments()),
+    fetchPromos: () => dispatch(fetchPromos()),
+    fetchLeaders: () => dispatch(fetchLeaders()),
+})
 
 const MenuNavigator = createStackNavigator({// a new component
-    Menu: { screen: Menu,
-    navigationOptions:({navigation})=>({
-        headerLeft: <Icon name="menu" size={24} 
-        color='white'
-        onPress={ () => navigation.toggleDrawer() } /> 
-    }) },
+    Menu: {
+        screen: Menu,
+        navigationOptions: ({ navigation }) => ({
+            headerLeft: <Icon name="menu" size={24}
+                color='white'
+                onPress={() => navigation.toggleDrawer()} />
+        })
+    },
     DishDetail: { screen: DishDetail },
-    
+
 }, {
         initialRouteName: 'Menu',//So this StackNavigator starts with menu as the first screen when this component is the stack.
         navigationOptions: {
@@ -28,35 +47,37 @@ const MenuNavigator = createStackNavigator({// a new component
             headerTitleStyle: {
                 color: "#fff"
             },
-            headerLeft: <Icon name="menu" size={24} 
-        color='white'
-        onPress={ () => navigation.toggleDrawer() } /> 
+            headerLeft: <Icon name="menu" size={24}
+                color='white'
+                onPress={() => navigation.toggleDrawer()} />
         }
     });
 
 
-  //The SafeAreaView is specifically for the iPhone X that defines a part of the area as a safe area where nothing else will be laid out.  
-    const CustomDrawerContentComponent = (props) => (
-        <ScrollView>
-        
-          <SafeAreaView style={styles.container} 
-          forceInset={{ top: 'always', 
-          horizontal: 'never' }}>
-            
+//The SafeAreaView is specifically for the iPhone X that defines a part of the area as a safe area where nothing else will be laid out.  
+const CustomDrawerContentComponent = (props) => (
+    <ScrollView>
+
+        <SafeAreaView style={styles.container}
+            forceInset={{
+                top: 'always',
+                horizontal: 'never'
+            }}>
+
             <View style={styles.drawerHeader}>
-              <View style={{flex:1}}>
-              <Image source={require('./images/logo.png')} 
-              style={styles.drawerImage} />
-              </View>
-              <View style={{flex: 2}}>
-                <Text style={styles.drawerHeaderText}>Ristorante Con Fusion</Text>
-              </View>
+                <View style={{ flex: 1 }}>
+                    <Image source={require('./images/logo.png')}
+                        style={styles.drawerImage} />
+                </View>
+                <View style={{ flex: 2 }}>
+                    <Text style={styles.drawerHeaderText}>Ristorante Con Fusion</Text>
+                </View>
             </View>
             <DrawerItems {...props} //{...props} is, ESX variable specific. Whatever the props are, just pass them on. Into the DrawerItems as such, everything. 
-         />
-         </SafeAreaView>
-        </ScrollView>
-      );
+            />
+        </SafeAreaView>
+    </ScrollView>
+);
 
 
 //The reason for creating the home navigator using the create stack navigator is that this create stack navigator provides the status bar, a way of specifying the navigation and the title for that home. 
@@ -64,7 +85,7 @@ const HomeNavigator = createStackNavigator({
     Home: { screen: Home }
 
 }, {
-        navigationOptions:({navigation})=>( {
+        navigationOptions: ({ navigation }) => ({
             headerStyle: {
                 backgroundColor: "#512DA8"
             },
@@ -72,18 +93,18 @@ const HomeNavigator = createStackNavigator({
             headerTitleStyle: {
                 color: "#fff"
             },
-            headerLeft: <Icon name="menu" size={24} 
-        color='white'
-        onPress={ () => navigation.toggleDrawer() } /> 
+            headerLeft: <Icon name="menu" size={24}
+                color='white'
+                onPress={() => navigation.toggleDrawer()} />
         })
     });
 
 const AboutNavigator = createStackNavigator({
     About: { screen: About },
-    
-   
+
+
 }, {
-        navigationOptions: ({navigation})=>({
+        navigationOptions: ({ navigation }) => ({
             headerStyle: {
                 backgroundColor: "#512DA8"
             },
@@ -91,18 +112,18 @@ const AboutNavigator = createStackNavigator({
             headerTitleStyle: {
                 color: "#fff"
             },
-            headerLeft: <Icon name="menu" size={24} 
-        color='white'
-        onPress={ () => navigation.toggleDrawer() } /> 
+            headerLeft: <Icon name="menu" size={24}
+                color='white'
+                onPress={() => navigation.toggleDrawer()} />
         })
     });
 
 
 const ContactNavigator = createStackNavigator({
     Contact: { screen: Contact },
-    
+
 }, {
-        navigationOptions: ({navigation})=>({
+        navigationOptions: ({ navigation }) => ({
             headerStyle: {
                 backgroundColor: "#512DA8"
             },
@@ -110,9 +131,9 @@ const ContactNavigator = createStackNavigator({
             headerTitleStyle: {
                 color: "#fff"
             },
-            headerLeft: <Icon name="menu" size={24} 
-        color='white'
-        onPress={ () => navigation.toggleDrawer() } /> 
+            headerLeft: <Icon name="menu" size={24}
+                color='white'
+                onPress={() => navigation.toggleDrawer()} />
         })
     });
 
@@ -124,10 +145,10 @@ const MainNavigator = createDrawerNavigator({
             drawerLabel: 'Home',
             drawerIcon: ({ tintColor, focused }) => (//tintColor will essentially specify how to render the icon in the draw there.
                 <Icon
-                  name='home'
-                  type='font-awesome'            
-                  size={24}
-                  color={tintColor}
+                    name='home'
+                    type='font-awesome'
+                    size={24}
+                    color={tintColor}
                 />
             )
         }
@@ -139,10 +160,10 @@ const MainNavigator = createDrawerNavigator({
             drawerLabel: 'Menu',
             drawerIcon: ({ tintColor, focused }) => (//tintColor will essentially specify how to render the icon in the draw there.
                 <Icon
-                  name='list'
-                  type='font-awesome'            
-                  size={24}
-                  color={tintColor}
+                    name='list'
+                    type='font-awesome'
+                    size={24}
+                    color={tintColor}
                 />
             )
         }
@@ -155,10 +176,10 @@ const MainNavigator = createDrawerNavigator({
             drawerLabel: 'Contact',
             drawerIcon: ({ tintColor, focused }) => (//tintColor will essentially specify how to render the icon in the draw there.
                 <Icon
-                  name='address-card'
-                  type='font-awesome'            
-                  size={22}
-                  color={tintColor}
+                    name='address-card'
+                    type='font-awesome'
+                    size={22}
+                    color={tintColor}
                 />
             )
         }
@@ -170,10 +191,10 @@ const MainNavigator = createDrawerNavigator({
             drawerLabel: 'About',
             drawerIcon: ({ tintColor, focused }) => (//tintColor will essentially specify how to render the icon in the draw there.
                 <Icon
-                  name='info-circle'
-                  type='font-awesome'            
-                  size={24}
-                  color={tintColor}
+                    name='info-circle'
+                    type='font-awesome'
+                    size={24}
+                    color={tintColor}
                 />
             )
         }
@@ -187,6 +208,13 @@ const MainNavigator = createDrawerNavigator({
 
 
 class Main extends Component {
+    // when the main component mounts, then at that time when it is mounted, I will issue the dispatch for all these four. Each of these, when you see the action creator, Corresponding to this. Each of them will issue a fetch to the server using the fetch, to obtain the data from our JSON server.
+    componentDidMount() {
+        this.props.fetchDishes();
+        this.props.fetchComments();
+        this.props.fetchPromos();
+        this.props.fetchLeaders();
+    }
 
     render() {
 
@@ -203,28 +231,28 @@ class Main extends Component {
 
 const styles = StyleSheet.create({
     container: {
-      flex: 1,
+        flex: 1,
     },
     drawerHeader: {
-      backgroundColor: '#512DA8',
-      height: 140,
-      alignItems: 'center',
-      justifyContent: 'center',
-      flex: 1,
-      flexDirection: 'row'
+        backgroundColor: '#512DA8',
+        height: 140,
+        alignItems: 'center',
+        justifyContent: 'center',
+        flex: 1,
+        flexDirection: 'row'
     },
     drawerHeaderText: {
-      color: 'white',
-      fontSize: 24,
-      fontWeight: 'bold'
+        color: 'white',
+        fontSize: 24,
+        fontWeight: 'bold'
     },
     drawerImage: {
-      margin: 10,
-      width: 80,
-      height: 60
+        margin: 10,
+        width: 80,
+        height: 60
     }
-  });
+});
 
-  
 
-export default Main;
+
+export default connect(mapStateToProps, mapDispatchToProps)(Main);
