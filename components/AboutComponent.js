@@ -3,6 +3,8 @@ import { Text, ScrollView, FlatList,View  } from 'react-native';
 import { Card,ListItem } from 'react-native-elements';
 import { connect } from 'react-redux';
 import { baseUrl } from '../shared/baseUrl';
+import { Loading } from './LoadingComponent';
+
 
 const mapStateToProps = state => {
     return {
@@ -34,27 +36,48 @@ render() {
         );
     }
 
+    if (this.props.leaders.isLoading){
+        return(
+            <ScrollView>
+                <History />
+                <Card
+                    title='Corporate Leadership'>
+                    <Loading />
+                </Card>
+            </ScrollView>
+        );
+    }
 
-    return (
-       <ScrollView>
-           <History/>
-        <Card
-        title='Corporate leadership'>
 
-       
-        <FlatList //this FlatList will be mapped into a list view in Android and the corresponding list view in iOS.
-            //It takes a data as one of the parameters and the data that I'm going to pass is props.dishes. 
-            data={this.props.leaders.leaders} //one of the paramenters ///
-            renderItem={renderLeaders}// secend param--used to specify how to render each item in the list. //we will render each item in the list(should be array of objects)
-            keyExtractor={item => item.id.toString()} //when you use renderItem you pahe to have the keyExtactor//
-        //The keyExtractor will extract one of the props off each item in the array and use that as a key here. Now, in this case, every item, when you go into dishes.js file, you'll notice that every item in the dishes.js file has this id here. 
-        />
-         </Card>
-         </ScrollView>
-    );
-}
+    else if (this.props.leaders.errMess) {
+        return(
+            <ScrollView>
+                <History />
+                <Card
+                    title='Corporate Leadership'>
+                    <Text>{this.props.leaders.errMess}</Text>
+                </Card>
+            </ScrollView>
+        );
+    } 
+else {
+            return(
+                <ScrollView>
+                    <History />
+                    <Card
+                        title='Corporate Leadership'>
+                    <FlatList 
+                        data={this.props.leaders.leaders}
+                        renderItem={renderLeader}
+                        keyExtractor={item => item.id.toString()}
+                        />
+                    </Card>
+                </ScrollView>
+            );
+        }
+    }
+};
 
-}
 
 
 
