@@ -3,13 +3,20 @@ import { Text, View, ScrollView, FlatList } from 'react-native';
 import { Card, Icon } from 'react-native-elements';
 import { connect } from 'react-redux';
 import { baseUrl } from '../shared/baseUrl';
+import { postFavorite } from '../redux/ActionCreators';
+
 
 const mapStateToProps = state => {
     return {
       dishes: state.dishes,
-      comments: state.comments
+      comments: state.comments,
+      favorites: state.favorites
     }
   }
+
+  const mapDispatchToProps = dispatch => ({
+    postFavorite: (dishId) => dispatch(postFavorite(dishId))
+});
 
 function RenderDish(props) {
 
@@ -72,17 +79,11 @@ function RenderComments(props) {
 
 class DishDetail extends Component {//here we make use of the card!
 
-    constructor(props) {
-        super(props);
-        this.state = {
-          
-            favorites: []//empty array, and then as I select the dishes and mark them as favorites, then they will be added into the favorites array. And then I can use the favorites array to check to see if my dish is a favorite dish or not.
-        };
-    }
+    
 
     markFavorite(dishId) {
-        this.setState({favorites: this.state.favorites.concat(dishId)});// add the favotite to  the array
-    }
+this.props.postFavorite(dishId);  
+ }
 
     // navigation
     static navigationOptions = {
@@ -94,7 +95,7 @@ class DishDetail extends Component {//here we make use of the card!
         return (
             <ScrollView>
                 <RenderDish dish={this.props.dishes.dishes[+dishId]} 
-                favorite={this.state.favorites.some(el => el === dishId)}//Some will return a true if there exists an item in there that matches this function, otherwise, it will return a false. 
+                favorite={this.props.favorites.some(el => el === dishId)}//Some will return a true if there exists an item in there that matches this function, otherwise, it will return a false. 
                 //will check every element in this array to see if this element, Is the same as the dishId.
                 //If this evaluates to true, if anyone of the elements in the array evaluates to true, this will return a true, and that's what this favorite will return. So, your favorite will be true if the dish ID already exists in this array. If it doesn't exist in this array, then el === dishId will fail for all the dishIds, and then so, in that case this will return a false.
                 onPress={() => this.markFavorite(dishId)} 
@@ -108,4 +109,4 @@ class DishDetail extends Component {//here we make use of the card!
 
 }
 
-export default connect(mapStateToProps)(DishDetail);
+export default connect(mapStateToProps,mapDispatchToProps)(DishDetail);
