@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 import { baseUrl } from '../shared/baseUrl';
 import { Loading } from './LoadingComponent';
 import { LEADERS } from '../shared/leaders';
+import * as Animatable from 'react-native-animatable';
 
 
 const mapStateToProps = state => {
@@ -56,11 +57,13 @@ return(
     else if (this.props.leaders.errMess) {
         return(
                 <ScrollView>
+                     <Animatable.View animation="fadeInDown" duration={2000} delay={1000}>
                 <History/>
              <Card
              title='Corporate leadership'>
             <Text>{this.props.leaders.errMess}</Text>
              </Card>
+             </Animatable.View>
              </ScrollView>  
         );
     }
@@ -68,6 +71,7 @@ return(
     else {
         return (
             <ScrollView>
+                 <Animatable.View animation="fadeInDown" duration={2000} delay={1000}>
                 <History/>
              <Card
              title='Corporate leadership'>
@@ -81,6 +85,7 @@ return(
              //The keyExtractor will extract one of the props off each item in the array and use that as a key here. Now, in this case, every item, when you go into dishes.js file, you'll notice that every item in the dishes.js file has this id here. 
              />
               </Card>
+              </Animatable.View>
               </ScrollView>
          ); 
     }  
