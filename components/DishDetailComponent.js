@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Text, View, ScrollView, FlatList, Modal, Button, StyleSheet } from 'react-native';
+import { Text, View, ScrollView, FlatList, Modal, Button, StyleSheet,Alert, PanResponder } from 'react-native';
 import { Card, Icon, Input, Rating } from 'react-native-elements';
 import { connect } from 'react-redux';
 import { baseUrl } from '../shared/baseUrl';
@@ -27,12 +27,57 @@ const mapDispatchToProps = dispatch => ({
 function RenderDish(props) {
 
     const dish = props.dish;//render dish function will receive as props that dish here
+    
+    //gesture
+    //
+    const recognizeDrag = ({ moveX, moveY, dx, dy }) => {
+        //MoveX is the latest screen coordinates of the recently moved touch gesture 
+        // moveY is the screen coordinates of the recently moved touch
+  //the X and Y are coordinates here
+  //dx is the accumulated distance of the gesture since the touch started along the X direction.
+    //    
+        if ( dx < -200 )//recognize right to left gesture
+            return true;
+        else
+            return false;
+    }
+
+
+
+    const panResponder = PanResponder.create({
+        //1st callback
+        onStartShouldSetPanResponder: (e, gestureState) => {
+            return true;//gestureState -info that we can use to recognize 
+            //when the user gesture will begin on the screen  various aspects about the actual pan gesture that the user does on the screen 
+        },
+        //2nd callback
+        // will be invoked when the user lifts their finger off the screen after performing the gesture.
+        onPanResponderEnd: (e, gestureState) => {
+            console.log("pan responder end", gestureState);
+            if (recognizeDrag(gestureState))//recognize that the gesture was done and also recognize what kind of gesture it is
+                Alert.alert(
+                    'Add Favorite',
+                    'Are you sure you wish to add ' + dish.name + ' to favorite?',
+                    [
+                    {text: 'Cancel', 
+                    onPress: () => console.log('Cancel Pressed'), 
+                    style: 'cancel'},
+                    {text: 'OK', 
+                    onPress: () => {props.favorite ? console.log('Already favorite') : props.onPress()}},
+                    ],
+                    { cancelable: false }
+                );
+
+            return true;
+        }
+    })
 
 
     if (dish != null) {
         return (
-            <Animatable.View animation="fadeInDown" duration={2000} delay={1000}>
-
+            <Animatable.View animation="fadeInDown" duration={2000} delay={1000}
+            {...panResponder.panHandlers}>
+            
             <Card
                 // when dish is null we will return the card
                 //And the card takes Props as featuredTitle, which is going to be shown in the Card
