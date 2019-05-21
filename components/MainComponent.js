@@ -4,6 +4,7 @@ import Home from './HomeComponent';
 import DishDetail from './DishDetailComponent';
 import Contact from './ContactComponent';
 import About from './AboutComponent';
+import Login from './LoginComponent';
 import { View, Platform, Text, ScrollView, Image, StyleSheet } from 'react-native';
 import { createStackNavigator, createDrawerNavigator, DrawerItems, SafeAreaView } from 'react-navigation';
 import { Icon } from 'react-native-elements';
@@ -29,6 +30,7 @@ const mapDispatchToProps = dispatch => ({
     fetchPromos: () => dispatch(fetchPromos()),
     fetchLeaders: () => dispatch(fetchLeaders()),
 })
+
 
 const MenuNavigator = createStackNavigator({// a new component
     Menu: {
@@ -83,7 +85,7 @@ const CustomDrawerContentComponent = (props) => (
     </ScrollView>
 );
 
-
+  
 //The reason for creating the home navigator using the create stack navigator is that this create stack navigator provides the status bar, a way of specifying the navigation and the title for that home. 
 const HomeNavigator = createStackNavigator({
     Home: { screen: Home }
@@ -177,8 +179,42 @@ const ContactNavigator = createStackNavigator({
       })
 
 
+      const LoginNavigator = createStackNavigator({
+        Login: { screen: Login }
+      }, {
+      navigationOptions: ({ navigation }) => ({
+        headerStyle: {
+            backgroundColor: "#512DA8"
+        },
+        headerTitleStyle: {
+            color: "#fff"            
+        },
+        headerTintColor: "#fff",
+        headerLeft: <Icon name="menu" size={24}
+          color='white'    
+          onPress={ () => navigation.toggleDrawer() } />    
+      })
+    })
+
+
 
 const MainNavigator = createDrawerNavigator({
+    Login: 
+    { screen: LoginNavigator,
+      navigationOptions: {
+        title: 'Login',
+        drawerLabel: 'Login',
+        drawerIcon: ({ tintColor, focused }) => (
+          <Icon
+            name='sign-in'
+            type='font-awesome'            
+            size={24}
+            color={tintColor}
+          />
+        ),
+      }
+    },
+    
     Home: {
         screen: HomeNavigator,
         navigationOptions: {
@@ -275,6 +311,7 @@ Reservation:{
     },
 
 {
+    initialRouteName: 'Home',// when the app opens the home component is the first one that will be rendered.
         drawerBackgroundColor: '#D1C4E9',
         contentComponent: CustomDrawerContentComponent
 

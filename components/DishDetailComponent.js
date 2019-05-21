@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Text, View, ScrollView, FlatList, Modal, Button, StyleSheet,Alert, PanResponder } from 'react-native';
+import { Text, View, ScrollView, FlatList, Modal, Button, StyleSheet,Alert, PanResponder,Animated, Easing } from 'react-native';
 import { Card, Icon, Input, Rating } from 'react-native-elements';
 import { connect } from 'react-redux';
 import { baseUrl } from '../shared/baseUrl';
@@ -42,8 +42,19 @@ function RenderDish(props) {
             return true;
         else
             return false;
+    };
+
+//task 3 begins 
+    const recognizeComment = ({ moveX, moveY, dx, dy }) => {
+        if ( dx > -200 ) //recognize gesture
+            return true;
+        else
+            return false;
     }
 
+    
+
+    //task 3 ends
 
 
     const panResponder = PanResponder.create({
@@ -74,13 +85,18 @@ function RenderDish(props) {
                     ],
                     { cancelable: false }
                 );
-
+                else  if 
+                (recognizeComment(gestureState))
+               return (
+                props.onShowModal()
+               )
 
             return true;
-        }
+
+
+                }
 
     })
-
 
     if (dish != null) {
         return (
@@ -133,7 +149,6 @@ function RenderDish(props) {
 
 function RenderComments(props) {
     const comments = props.comments;
-
     const renderCommentItem = ({ item, index }) => {
         return (
             <View key={index} style={{ margin: 10 }}>
@@ -207,6 +222,7 @@ class DishDetail extends Component {//here we make use of the card!
     }
 
     render() {
+
         const dishId = this.props.navigation.getParam('dishId', '');
         return (
             <ScrollView>
