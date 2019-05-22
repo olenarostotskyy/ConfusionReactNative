@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Text, View, ScrollView, FlatList, Modal, Button, StyleSheet,Alert, PanResponder,Animated, Easing } from 'react-native';
+import { Text, View, ScrollView, FlatList, Modal, Button, StyleSheet, Alert, PanResponder, Animated, Easing, Share } from 'react-native';
 import { Card, Icon, Input, Rating } from 'react-native-elements';
 import { connect } from 'react-redux';
 import { baseUrl } from '../shared/baseUrl';
@@ -27,32 +27,41 @@ const mapDispatchToProps = dispatch => ({
 function RenderDish(props) {
 
     const dish = props.dish;//render dish function will receive as props that dish here
-    
+
     //gesture
 
     handleViewRef = ref => this.view = ref;
-    
+
     const recognizeDrag = ({ moveX, moveY, dx, dy }) => {
         //MoveX is the latest screen coordinates of the recently moved touch gesture 
         // moveY is the screen coordinates of the recently moved touch
-  //the X and Y are coordinates here
-  //dx is the accumulated distance of the gesture since the touch started along the X direction.
-    //    
-        if ( dx < -200 )//recognize right to left gesture
+        //the X and Y are coordinates here
+        //dx is the accumulated distance of the gesture since the touch started along the X direction.
+        //    
+        if (dx < -200)//recognize right to left gesture
             return true;
         else
             return false;
     };
 
-//task 3 begins 
+    //task 3 begins 
     const recognizeComment = ({ moveX, moveY, dx, dy }) => {
-        if ( dx > -200 ) //recognize gesture
+        if (dx > -200) //recognize gesture
             return true;
         else
             return false;
     }
 
-    
+    const shareDish = (title, message, url) => {
+        Share.share({//share API
+            //paremeters:
+            title: title,
+            message: title + ': ' + message + ' ' + url,
+            url: url
+        }, {
+                dialogTitle: 'Share ' + title//title of the pop up box
+            })
+    }
 
     //task 3 ends
 
@@ -66,7 +75,8 @@ function RenderDish(props) {
 
         onPanResponderGrant: () => {
             this.view.rubberBand(1000)//animation
-            .then(endState => console.log(endState.finished ? 'finished' : 'cancelled'));},
+                .then(endState => console.log(endState.finished ? 'finished' : 'cancelled'));
+        },
 
         //2nd callback
         // will be invoked when the user lifts their finger off the screen after performing the gesture.
@@ -77,67 +87,77 @@ function RenderDish(props) {
                     'Add Favorite',
                     'Are you sure you wish to add ' + dish.name + ' to favorite?',
                     [
-                    {text: 'Cancel', 
-                    onPress: () => console.log('Cancel Pressed'), 
-                    style: 'cancel'},
-                    {text: 'OK', 
-                    onPress: () => {props.favorite ? console.log('Already favorite') : props.onPress()}},
+                        {
+                            text: 'Cancel',
+                            onPress: () => console.log('Cancel Pressed'),
+                            style: 'cancel'
+                        },
+                        {
+                            text: 'OK',
+                            onPress: () => { props.favorite ? console.log('Already favorite') : props.onPress() }
+                        },
                     ],
                     { cancelable: false }
                 );
-                else  if 
+            else if
                 (recognizeComment(gestureState))
-               return (
-                props.onShowModal()
-               )
+                return (
+                    props.onShowModal()
+                )
 
             return true;
 
 
-                }
+        }
 
     })
 
     if (dish != null) {
         return (
             <Animatable.View animation="fadeInDown" duration={2000} delay={1000}
-            ref={this.handleViewRef}
-            {...panResponder.panHandlers}>
-            
-            <Card
-                // when dish is null we will return the card
-                //And the card takes Props as featuredTitle, which is going to be shown in the Card
-                featuredTitle={dish.name}//dish object will contain a featuredTitle
-                image={{ uri: baseUrl + dish.image }}>
+                ref={this.handleViewRef}
+                {...panResponder.panHandlers}>
 
-                <Text style={{ margin: 10 }}>
-                    {dish.description}
-                </Text>
-                <View style={styles.cardRow}>
-                    <Icon
-                        raised//if I use the prop or attribute as raised for the Icon, what this does is it displays the Icon in the form of a button, a rounded button. will automatically make that into a button-like display
-                        reverse//reverse the color
-                        name={props.favorite ? 'heart' : 'heart-o'}
-                        type='font-awesome'
-                        color='#f50'
-                        onPress={() => props.favorite ? console.log('Already favorite') : props.onPress()}
-                    //if it is already the favourite dish -console.log
-                    //Otherwise, I'm going to call props.onPress() and then we will close off the icon here. So, again, using the props.favorite, if it is true, then I'm going to simply log out saying it's already in the favorites. If it's false, then I'm going to call the onPress(), which will be passed in as a parameter here.
-                    />
-                    <Icon
-                        raised//if I use the prop or attribute as raised for the Icon, what this does is it displays the Icon in the form of a button, a rounded button. will automatically make that into a button-like display
-                        reverse//reverse the color
-                        name="pencil"
-                        type='font-awesome'
-                        color='#f50'
-                        style={styles.cardItem}
-                        onPress={() => props.onShowModal()}
+                <Card
+                    // when dish is null we will return the card
+                    //And the card takes Props as featuredTitle, which is going to be shown in the Card
+                    featuredTitle={dish.name}//dish object will contain a featuredTitle
+                    image={{ uri: baseUrl + dish.image }}>
 
-                    //if it is already the favourite dish -console.log
-                    //Otherwise, I'm going to call props.onPress() and then we will close off the icon here. So, again, using the props.favorite, if it is true, then I'm going to simply log out saying it's already in the favorites. If it's false, then I'm going to call the onPress(), which will be passed in as a parameter here.
-                    />
-                </View>
-            </Card>
+                    <Text style={{ margin: 10 }}>
+                        {dish.description}
+                    </Text>
+                    <View style={styles.cardRow}>
+                        <Icon
+                            raised//if I use the prop or attribute as raised for the Icon, what this does is it displays the Icon in the form of a button, a rounded button. will automatically make that into a button-like display
+                            reverse//reverse the color
+                            name={props.favorite ? 'heart' : 'heart-o'}
+                            type='font-awesome'
+                            color='#f50'
+                            onPress={() => props.favorite ? console.log('Already favorite') : props.onPress()}
+                        //if it is already the favourite dish -console.log
+                        //Otherwise, I'm going to call props.onPress() and then we will close off the icon here. So, again, using the props.favorite, if it is true, then I'm going to simply log out saying it's already in the favorites. If it's false, then I'm going to call the onPress(), which will be passed in as a parameter here.
+                        />
+                        <Icon
+                            raised//if I use the prop or attribute as raised for the Icon, what this does is it displays the Icon in the form of a button, a rounded button. will automatically make that into a button-like display
+                            reverse//reverse the color
+                            name="pencil"
+                            type='font-awesome'
+                            color='#f50'
+                            style={styles.cardItem}
+                            onPress={() => props.onShowModal()} />
+                       
+                        <Icon
+                            raised
+                            reverse
+                            name='share'
+                            type='font-awesome'
+                            color='#51D2A8'
+                            style={styles.cardItem}
+                            onPress={() => shareDish(dish.name, dish.description, baseUrl + dish.image)} />
+
+                    </View>
+                </Card>
             </Animatable.View>
         );
     }
@@ -167,15 +187,15 @@ function RenderComments(props) {
     };
 
     return (
-        <Animatable.View animation="fadeInUp" duration={2000} delay={1000}>        
+        <Animatable.View animation="fadeInUp" duration={2000} delay={1000}>
 
-        <Card title='Comments' >
-            <FlatList
-                data={comments}
-                renderItem={renderCommentItem}
-                keyExtractor={item => item.id.toString()}
-            />
-        </Card>
+            <Card title='Comments' >
+                <FlatList
+                    data={comments}
+                    renderItem={renderCommentItem}
+                    keyExtractor={item => item.id.toString()}
+                />
+            </Card>
         </Animatable.View>
     );
 }
